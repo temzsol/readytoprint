@@ -287,6 +287,7 @@ class ProductListController extends Controller
     // }
     public function getPrice(Request $request)
     {
+       
         // Check if custom size is selected
         if ($request->size === 'Custom Size') {
             // dd($request->all()); 
@@ -369,22 +370,22 @@ class ProductListController extends Controller
 
         // Check if fixed price option logic applies
         if ($request->price_option === 'fixed') {
-            
-            
-
+       
+            // dd($request->all());
             // Retrieve the FixedPriceOption for the specified product
             $priceOption = FixedPriceOption::where('product_id', $request->product_id)
                 ->where('price_option', $request->price_option)
                 ->where('width', $width)
                 ->where('height', $height)
                 ->first();
-
-            if ($priceOption) {
-                $priceRange = $priceOption->fixed_price_ranges()
+                if ($priceOption) {
+                    
+                    $priceRange = $priceOption->fixed_price_ranges()
                     ->where('min_qty', '<=', $quantity)
                     ->where('max_qty', '>=', $quantity)
                     ->first();
-
+                    
+                    // dd($priceRange);
                 if ($priceRange && $priceRange->price > 0) {
                     return response()->json([
                         'success' => true,
