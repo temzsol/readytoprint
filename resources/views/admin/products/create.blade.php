@@ -1430,68 +1430,60 @@
 
         });
         $("#productform").submit(function(event) {
-            event.preventDefault();
-            var element = $(this);
+    event.preventDefault();
+    var element = $(this);
 
-            $("button[type=submit]").prop('disabled', true);
+    $("button[type=submit]").prop('disabled', true);
 
-            $.ajax({
-                url: '{{ route('products.store') }}',
-                type: 'post',
-                data: element.serializeArray(),
-                dataType: 'json',
-                success: function(response) {
+    $.ajax({
+        url: '{{ route('products.store') }}',
+        type: 'post',
+        data: element.serializeArray(),
+        dataType: 'json',
+        success: function(response) {
 
-                    $("button[type=submit]").prop('disabled', false);
+            $("button[type=submit]").prop('disabled', false);
 
-                    if (response["status"] == true) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Product has been saved successfully!',
-                            timer: 3000,
-                            showConfirmButton: false
-                        });
+            if (response["status"] == true) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Product has been saved successfully!',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
 
-                        window.location.href = "{{ route('products.index') }}";
-                        $('#product_name').removeClass('is-invalid').siblings('p').removeClass(
-                            'invalid-feedback').html("");
-                        $('#product_slug').removeClass('is-invalid').siblings('p').removeClass(
-                            'invalid-feedback').html("");
+                window.location.href = "{{ route('products.index') }}";
 
-                    } else {
-                        var errors = response['errors'];
-                        $(".error").removeClass('invalid-feedback').html('');
-                        $("input[type='text'], select").removeClass('is-invalid');
+            } else {
+                var errors = response['errors'];
+                var errorMessages = "";
 
-                        $.each(errors, function(key, value) {
-                            $(`#${key}`)
-                                .addClass('is-invalid')
-                                .siblings('p')
-                                .addClass('invalid-feedback').html(value);
-                        });
+                $.each(errors, function(key, value) {
+                    errorMessages += `<p>• ${value[0]}</p>`; // Collect errors
+                });
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Please correct the highlighted errors.',
-                            timer: 3000,
-                            showConfirmButton: false
-                        });
-                    }
-                },
-                error: function(jqXHR, exception) {
-                    $("button[type=submit]").prop('disabled', false);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Something went wrong. Please try again later.',
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
-                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Errors',
+                    html: errorMessages, // Display all errors in SweetAlert
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(jqXHR, exception) {
+            $("button[type=submit]").prop('disabled', false);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again later.',
+                timer: 3000,
+                showConfirmButton: false
             });
-        });
+        }
+    });
+});
+
 
 
         $("#product_name").change(function() {

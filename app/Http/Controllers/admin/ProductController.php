@@ -55,7 +55,6 @@ class ProductController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->all());
         $rules = [
             'product_name' => 'required',
             'product_slug' => 'required|unique:product',
